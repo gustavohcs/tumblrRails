@@ -1,5 +1,7 @@
 class PostsController < ApplicationController
 
+
+
   def index
     @posts = Post.all.order('created_at DESC')
   end
@@ -19,13 +21,37 @@ class PostsController < ApplicationController
   end
 
   def show
-    @post = Post.find(params[:id])
+    find_post
+  end
+
+  def edit
+    find_post
+  end
+
+  def update
+    find_post
+
+    if @post.update(params[:post].permit(:title, :body))
+      redirect_to @post
+    else
+      render 'edit'
+    end
+  end
+
+  def destroy
+    find_post
+    @post.destroy
+    redirect_to root_path
   end
 
   private
 
   def post_params
-   params.require(:post).permit(:title, :body)
+    params.require(:post).permit(:title, :body)
+  end
+
+  def find_post
+    @post = Post.find(params[:id])
   end
 
 end
